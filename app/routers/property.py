@@ -28,8 +28,6 @@ def upload_image_pair(property_id: int, image_pair: ImagePair, db: Session = Dep
     if not db_property:
         raise HTTPException(status_code=404, detail="Property not found")
     
-    compliance_id = str(uuid.uuid4())
-    
     # Referencing the project mission for California AB 723 transparency requirements
     compliance_note = (
         "California AB 723 Compliance: "
