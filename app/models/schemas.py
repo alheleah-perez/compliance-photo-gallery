@@ -2,8 +2,8 @@ from pydantic import BaseModel, HttpUrl
 
 class PropertyBase(BaseModel):
     address: str
-    realtor_id: int
     price: float
+    realtor_id: Optional[int] = None
 
 class PropertyCreate(PropertyBase):
     pass
@@ -27,3 +27,18 @@ class ImagePairResponse(BaseModel):
     edited_url: HttpUrl
     edit_description: str
     compliance_note: str
+
+class UserBase(BaseModel):
+    username: str
+    realtor_license_number: str
+
+class UserCreate(UserBase):
+    password: str
+
+class User(UserBase):
+    id: int
+    name: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+

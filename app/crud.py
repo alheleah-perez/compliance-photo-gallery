@@ -38,3 +38,20 @@ def update_disclosure_status(db: Session, property_id: int, status: bool):
         db.commit()
         db.refresh(db_property)
     return db_property
+
+def get_user_by_username(db: Session, username: str):
+    return db.query(orm_models.Realtor).filter(orm_models.Realtor.username == username).first()
+
+def create_user(db: Session, user: schemas.UserCreate):
+    from app import auth
+    hashed_password = auth.get_password_hash(user.password)
+    db_user = orm_models.Realtor(
+        username=user.username,
+        hashed_password=hashed_password,
+        realtor_license_number=user.realtor_license_number
+    )
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+

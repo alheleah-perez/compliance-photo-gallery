@@ -6,7 +6,10 @@ class Realtor(Base):
     __tablename__ = "realtors"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
+    name = Column(String, index=True, nullable=True)
+    username = Column(String, unique=True, index=True)
+    hashed_password = Column(String)
+    realtor_license_number = Column(String)
     
     properties = relationship("Property", back_populates="realtor")
 

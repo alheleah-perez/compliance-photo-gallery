@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
-from app.models.schemas import Property, PropertyCreate, ImagePair, ImagePairResponse
-from app import crud
+from app.models.schemas import Property, PropertyCreate, ImagePair, ImagePairResponse, User
+from app import crud, auth
 from app.database import get_db
 
 router = APIRouter(
@@ -18,11 +18,12 @@ def get_property(property_id: int, db: Session = Depends(get_db)):
     return db_property
 
 @router.post("/", response_model=Property)
-def create_property(property: PropertyCreate, db: Session = Depends(get_db)):
+def create_property(property: PropertyCreate, db: Session = Depends(get_db), current_user: User = Depends(auth.get_current_user)):
+    property.realtor_id = current_user.id
     return crud.create_property(db=db, property=property)
 
 @router.post("/{property_id}/upload-pair", response_model=ImagePairResponse)
-def upload_image_pair(property_id: int, image_pair: ImagePair, db: Session = Depends(get_db)):
+def upload_image_pair(property_id: int, image_pair: ImagePair, db: Session = Depends(get_db), current_user: User = Depends(auth.get_current_user)):
     from app.models import orm_models
     db_property = db.query(orm_models.Property).filter(orm_models.Property.id == property_id).first()
     if not db_property:
