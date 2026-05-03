@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, Float
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Float
 from sqlalchemy.orm import relationship
 from app.database import Base
 
@@ -17,6 +17,7 @@ class Property(Base):
     address = Column(String, index=True)
     price = Column(Float)
     realtor_id = Column(Integer, ForeignKey("realtors.id"))
+    disclosure_status = Column(Boolean, default=False)
 
     realtor = relationship("Realtor", back_populates="properties")
     image_pairs = relationship("ImagePair", back_populates="property")
