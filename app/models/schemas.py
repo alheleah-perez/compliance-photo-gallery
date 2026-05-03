@@ -10,6 +10,7 @@ class PropertyCreate(PropertyBase):
 
 class Property(PropertyBase):
     id: int
+    disclosure_status: bool = False
 
     class Config:
         from_attributes = True
