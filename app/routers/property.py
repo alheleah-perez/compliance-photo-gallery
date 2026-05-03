@@ -1,5 +1,6 @@
-from fastapi import APIRouter
-from app.models.schemas import Property, PropertyCreate
+import uuid
+from fastapi import APIRouter, HTTPException
+from app.models.schemas import Property, PropertyCreate, ImagePair, ImagePairResponse
 
 router = APIRouter(
     prefix="/properties",
@@ -25,3 +26,27 @@ def create_property(property: PropertyCreate):
     new_property = Property(id=new_id, **property.model_dump())
     dummy_properties[new_id] = new_property.model_dump()
     return new_property
+
+@router.post("/{property_id}/upload-pair", response_model=ImagePairResponse)
+def upload_image_pair(property_id: int, image_pair: ImagePair):
+    if property_id not in dummy_properties:
+        raise HTTPException(status_code=404, detail="Property not found")
+    
+    compliance_id = str(uuid.uuid4())
+    
+    # Referencing the project mission for California AB 723 transparency requirements
+    compliance_note = (
+        "California AB 723 Compliance: "
+        "Digitally altered images that materially change the property's appearance "
+        "must be conspicuously labeled. The original, unaltered image must also be provided "
+        "in the same advertisement."
+    )
+    
+    return ImagePairResponse(
+        compliance_id=compliance_id,
+        property_id=property_id,
+        original_url=image_pair.original_url,
+        edited_url=image_pair.edited_url,
+        edit_description=image_pair.edit_description,
+        compliance_note=compliance_note
+    )
